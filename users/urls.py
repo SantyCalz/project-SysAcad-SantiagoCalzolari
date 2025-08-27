@@ -12,49 +12,71 @@ Notes:
 
 from django.urls import path
 
-from . import views
+from .views import (
+    # Vistas de Admin
+    admin_dashboard,
+    UserListView, UserCreateView, UserUpdateView, UserDeleteView,
+    FacultyListView, FacultyCreateView, FacultyUpdateView, FacultyDeleteView,
+    CareerListView, CareerCreateView, CareerUpdateView, CareerDeleteView,
+    SubjectListView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView,
+    FinalExamListView, FinalExamCreateView, FinalExamUpdateView, FinalExamDeleteView,
+    assign_subject_professors,
+    assign_final_professors,
+
+    # Vistas de Estudiante
+    student_dashboard,
+    subject_inscribe,
+    final_exam_inscribe,
+    download_regular_certificate,
+
+    # Vistas de Profesor
+    professor_dashboard,
+    grade_list,
+    grade_edit,
+    professor_final_inscriptions,
+)
 
 app_name = "users"
 
 urlpatterns = [
     # Admin
-    path('admin/dashboard/', views.admin_dashboard, name='admin-dashboard'),
-    path('admin/users/', views.user_list, name='user-list'),
-    path('admin/users/create/', views.user_create, name='user-create'),
-    path('admin/users/<int:pk>/edit/', views.user_edit, name='user-edit'),
-    path('admin/users/<int:pk>/delete/', views.user_delete, name='user-delete'),
+    path('admin/dashboard/', admin_dashboard, name='admin-dashboard'),
+    path('admin/users/', UserListView.as_view(), name='user-list'),
+    path('admin/users/create/', UserCreateView.as_view(), name='user-create'),
+    path('admin/users/<int:pk>/edit/', UserUpdateView.as_view(), name='user-edit'),
+    path('admin/users/<int:pk>/delete/', UserDeleteView.as_view(), name='user-delete'),
 
-    path('admin/faculties/', views.faculty_list, name='faculty-list'),
-    path('admin/faculties/create/', views.faculty_create, name='faculty-create'),
-    path('admin/faculties/<str:code>/edit/', views.faculty_edit, name='faculty-edit'),
-    path('admin/faculties/<str:code>/delete/', views.faculty_delete, name='faculty-delete'),
+    path('admin/faculties/', FacultyListView.as_view(), name='faculty-list'),
+    path('admin/faculties/create/', FacultyCreateView.as_view(), name='faculty-create'),
+    path('admin/faculties/<str:code>/edit/', FacultyUpdateView.as_view(), name='faculty-edit'),
+    path('admin/faculties/<str:code>/delete/', FacultyDeleteView.as_view(), name='faculty-delete'),
 
-    path('admin/careers/', views.career_list, name='career-list'),
-    path('admin/careers/create/', views.career_create, name='career-create'),
-    path('admin/careers/<str:code>/edit/', views.career_edit, name='career-edit'),
-    path('admin/careers/<str:code>/delete/', views.career_delete, name='career-delete'),
+    path('admin/careers/', CareerListView.as_view(), name='career-list'),
+    path('admin/careers/create/', CareerCreateView.as_view(), name='career-create'),
+    path('admin/careers/<str:code>/edit/', CareerUpdateView.as_view(), name='career-edit'),
+    path('admin/careers/<str:code>/delete/', CareerDeleteView.as_view(), name='career-delete'),
 
-    path('admin/subjects/', views.subject_list, name='subject-list'),
-    path('admin/subjects/create/', views.subject_create, name='subject-create'),
-    path('admin/subjects/<str:code>/edit/', views.subject_edit, name='subject-edit'),
-    path('admin/subjects/<str:code>/delete/', views.subject_delete, name='subject-delete'),
-    path('admin/subjects/<str:code>/assign-professors/', views.assign_subject_professors, name='assign-subject-professors'),
+    path('admin/subjects/', SubjectListView.as_view(), name='subject-list'),
+    path('admin/subjects/create/', SubjectCreateView.as_view(), name='subject-create'),
+    path('admin/subjects/<str:code>/edit/', SubjectUpdateView.as_view(), name='subject-edit'),
+    path('admin/subjects/<str:code>/delete/', SubjectDeleteView.as_view(), name='subject-delete'),
+    path('admin/subjects/<str:code>/assign-professors/', assign_subject_professors, name='assign-subject-professors'),
 
-    path('admin/finals/', views.final_list, name='final-list'),
-    path('admin/finals/create/', views.final_create, name='final-create'),
-    path('admin/finals/<int:pk>/edit/', views.final_edit, name='final-edit'),
-    path('admin/finals/<int:pk>/delete/', views.final_delete, name='final-delete'),
-    path('admin/finals/<int:pk>/assign-professors/', views.assign_final_professors, name='assign-final-professors'),
+    path('admin/finals/', FinalExamListView.as_view(), name='final-list'),
+    path('admin/finals/create/', FinalExamCreateView.as_view(), name='final-create'),
+    path('admin/finals/<int:pk>/edit/', FinalExamUpdateView.as_view(), name='final-edit'),
+    path('admin/finals/<int:pk>/delete/', FinalExamDeleteView.as_view(), name='final-delete'),
+    path('admin/finals/<int:pk>/assign-professors/', assign_final_professors, name='assign-final-professors'),
 
     # Student
-    path('student/dashboard/', views.student_dashboard, name='student-dashboard'),
-    path('student/subject/<str:subject_code>/inscribe/', views.subject_inscribe, name='subject-inscribe'),
-    path('student/final/<int:final_exam_id>/inscribe/', views.final_exam_inscribe, name='final-inscribe'),
-    path('student/certificate/regular/', views.download_regular_certificate, name='student-regular-certificate'),
+    path('student/dashboard/', student_dashboard, name='student-dashboard'),
+    path('student/subject/<str:subject_code>/inscribe/', subject_inscribe, name='subject-inscribe'),
+    path('student/final/<int:final_exam_id>/inscribe/', final_exam_inscribe, name='final-inscribe'),
+    path('student/certificate/regular/', download_regular_certificate, name='student-regular-certificate'),
 
     # Professor
-    path('professor/dashboard/', views.professor_dashboard, name='professor-dashboard'),
-    path('professor/grades/<str:subject_code>/', views.grade_list, name='grade-list'),
-    path('professor/grade/<int:pk>/edit/', views.grade_edit, name='grade-edit'),
-    path('professor/final/<int:final_exam_id>/inscriptions/',views.professor_final_inscriptions, name='professor-final-inscriptions')
+    path('professor/dashboard/', professor_dashboard, name='professor-dashboard'),
+    path('professor/grades/<str:subject_code>/', grade_list, name='grade-list'),
+    path('professor/grade/<int:pk>/edit/', grade_edit, name='grade-edit'),
+    path('professor/final/<int:final_exam_id>/inscriptions/', professor_final_inscriptions, name='professor-final-inscriptions')
 ]
