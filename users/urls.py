@@ -2,7 +2,7 @@
 
 Sections:
 - Admin: CRUD for users, faculties, careers, subjects, finals, and assignments.
-- Student: dashboard, subject/final inscriptions, certificates.
+- Student: dashboard, subject/final inscriptions, certificates, student file.
 - Professor: dashboard, grade management, final inscriptions.
 
 Notes:
@@ -28,6 +28,8 @@ from .views import (
     subject_inscribe,
     final_exam_inscribe,
     download_regular_certificate,
+    StudentFileDocxView, # Agregado
+    StudentFileJSONView, # Agregado
 
     # Vistas de Profesor
     professor_dashboard,
@@ -73,6 +75,10 @@ urlpatterns = [
     path('student/subject/<str:subject_code>/inscribe/', subject_inscribe, name='subject-inscribe'),
     path('student/final/<int:final_exam_id>/inscribe/', final_exam_inscribe, name='final-inscribe'),
     path('student/certificate/regular/', download_regular_certificate, name='student-regular-certificate'),
+    
+    # Nuevas rutas para la Ficha del Alumno
+    path('student/<str:student_id>/file/docx/', StudentFileDocxView.as_view(), name='student-file-docx'),
+    path('student/<str:student_id>/file/json/', StudentFileJSONView.as_view(), name='student-file-json'),
 
     # Professor
     path('professor/dashboard/', professor_dashboard, name='professor-dashboard'),

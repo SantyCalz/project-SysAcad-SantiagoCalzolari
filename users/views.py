@@ -593,3 +593,62 @@ def professor_final_inscriptions(request, final_exam_id):
     )
     return render(request, "users/professor_final_inscriptions.html", {
         "final_exam": final_exam, "inscriptions": inscriptions})
+
+
+import json
+from django.template.loader import render_to_string
+from django.http import HttpResponse, JsonResponse
+from django.views import View
+
+from users.services import StudentFileService # Importa el nuevo servicio
+from users.models import CustomUser, Student # Asegúrate de que Student esté importado
+
+
+# ... (resto del código de views.py) ...
+
+
+# --------- Vistas para la Ficha del Alumno (SOLID) ---------
+class StudentFileDocxView(View):
+    """
+    Vista para generar la Ficha del Alumno en formato DOCX.
+    
+    Responsabilidad única: generar el archivo Word a partir de los datos.
+    """
+    def get(self, request, student_id):
+        student_data = StudentFileService.get_student_file_data(student_id)
+        if not student_data:
+            messages.error(request, "Ficha de Alumno no encontrada.")
+            return redirect('users:student-dashboard')
+
+        doc_path = Path(settings.BASE_DIR) /"ficha_alumno.docx"
+        if not doc_path.exists():
+            messages.error(request, "No se encontró la plantilla de la Ficha del Alumno.")
+            return redirect('users:student-dashboard')
+
+        try:
+            doc = DocxTemplate(str(doc_path))
+            doc.render(student_data)
+            output = BytesIO()
+            doc.save(output)
+            output.seek(0)
+            
+            filename = f"ficha_alumno_{student_id}.docx"
+            response = HttpResponse(
+                output.getvalue(),
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+            response["Content-Disposition"] = f'attachment; filename="{filename}"'
+            return response
+        
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al generar la Ficha: {e}")
+            return redirect('users:student-dashboard')
+
+
+class StudentFileJSONView(View):
+    
+    def get(self, request, student_id):
+        student_data = StudentFileService.get_student_file_data(student_id)
+        if not student_data:
+            return JsonResponse({'error': 'Ficha de Alumno no encontrada.'}, status=404)
+        return JsonResponse(student_data)
